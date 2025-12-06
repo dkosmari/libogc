@@ -18,14 +18,14 @@ BUILD		:=	build
 
 DATESTRING	:=	$(shell date +%Y%m%d)
 ifeq ($(strip $(LIBOGC_VER)),)
-export LIBOGC_VER := $(shell git --git-dir=. describe --tags || hg log -r . -T "{latesttag('re:^v\d') % '{tag}{sub(\"-0-.*\", \"\", \"-{distance}-m{node|short}\")}' }" )
+export LIBOGC_VER := $(shell git --git-dir=. describe --tags || hg log -r . -T "{latesttag('re:^v\d') % '{tag}{sub(\"-0-.*\", \"\", \"-{distance}-m{node|short}\")}' }")
 $(info LIBOGC_VER="$(LIBOGC_VER)")
 endif
 
-export LIBOGC_MAJOR  := `echo $(LIBOGC_VER) | sed "s/^v\([0-9]*\).*/\1/"`
-export LIBOGC_MINOR  := `echo $(LIBOGC_VER) | sed "s/v[0-9]*\.\([0-9]*\).*/\1/"`
-export LIBOGC_PATCH  := `echo $(LIBOGC_VER) | sed "s/v[0-9]*\.[0-9]*\.\([0-9]*\).*/\1/"`
-export LIBOGC_SUFFIX := `echo $(LIBOGC_VER) | sed "s/v[0-9]*\.[0-9]*\.[0-9]*\(.*\)/\1/"`
+export LIBOGC_MAJOR  := $(shell echo $(LIBOGC_VER) | sed "s/^v\([0-9]*\).*/\1/")
+export LIBOGC_MINOR  := $(shell echo $(LIBOGC_VER) | sed "s/v[0-9]*\.\([0-9]*\).*/\1/")
+export LIBOGC_PATCH  := $(shell echo $(LIBOGC_VER) | sed "s/v[0-9]*\.[0-9]*\.\([0-9]*\).*/\1/")
+export LIBOGC_SUFFIX := $(shell echo $(LIBOGC_VER) | sed "s/v[0-9]*\.[0-9]*\.[0-9]*\(.*\)/\1/")
 
 #---------------------------------------------------------------------------------
 ifeq ($(strip $(PLATFORM)),)
