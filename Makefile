@@ -18,7 +18,8 @@ BUILD		:=	build
 
 DATESTRING	:=	$(shell date +%Y%m%d)
 ifeq ($(strip $(LIBOGC_VER)),)
-	export LIBOGC_VER := $(shell git describe --tags)
+export LIBOGC_VER := $(shell git --git-dir=. describe --tags || hg log -r . -T "{latesttag('re:^v\d') % '{tag}{sub(\"-0-.*\", \"\", \"-{distance}-m{node|short}\")}' }" )
+$(info LIBOGC_VER="$(LIBOGC_VER)")
 endif
 
 export LIBOGC_MAJOR  := `echo $(LIBOGC_VER) | sed "s/^v\([0-9]*\).*/\1/"`
