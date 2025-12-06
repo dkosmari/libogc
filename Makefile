@@ -10,7 +10,7 @@ ifeq ($(strip $(DEVKITPPC)),)
 $(error "Please set DEVKITPPC in your environment. export DEVKITPPC=<path to>devkitPPC")
 endif
 
-export PATH	:=	$(DEVKITPPC)/bin:$(PATH)
+export PATH	:=	$(PATH):$(DEVKITPPC)/bin
 
 include	$(DEVKITPPC)/base_rules
 
