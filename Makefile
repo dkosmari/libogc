@@ -23,9 +23,9 @@ $(info LIBOGC_VER="$(LIBOGC_VER)")
 endif
 
 export LIBOGC_MAJOR  := $(shell echo $(LIBOGC_VER) | sed "s/^v\([0-9]*\).*/\1/")
-export LIBOGC_MINOR  := $(shell echo $(LIBOGC_VER) | sed "s/v[0-9]*\.\([0-9]*\).*/\1/")
-export LIBOGC_PATCH  := $(shell echo $(LIBOGC_VER) | sed "s/v[0-9]*\.[0-9]*\.\([0-9]*\).*/\1/")
-export LIBOGC_SUFFIX := $(shell echo $(LIBOGC_VER) | sed "s/v[0-9]*\.[0-9]*\.[0-9]*\(.*\)/\1/")
+export LIBOGC_MINOR  := $(shell echo $(LIBOGC_VER) | sed "s/^v[0-9]*\.\([0-9]*\).*/\1/")
+export LIBOGC_PATCH  := $(shell echo $(LIBOGC_VER) | sed "s/^v[0-9]*\.[0-9]*\.\([0-9]*\).*/\1/")
+export LIBOGC_SUFFIX := $(shell echo $(LIBOGC_VER) | sed "s/^v[0-9]*\.[0-9]*\.[0-9]*\(.*\)/\1/")
 
 #---------------------------------------------------------------------------------
 ifeq ($(strip $(PLATFORM)),)
