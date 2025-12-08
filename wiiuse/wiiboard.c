@@ -76,8 +76,8 @@ int wii_board_handshake(struct wiimote_t* wm, struct wii_board_t* wb, ubyte* dat
 	wb->cbl[0] = (data[offset+0x0a]<<8) | data[offset+0x0b];
 
 	// The reference values for 17 Kg
-	wb->ctr[1] = (data[offset+0x0c]<<8) | data[offset+0x0e];
-	wb->cbr[1] = (data[offset+0x0d]<<8) | data[offset+0x0f];
+	wb->ctr[1] = (data[offset+0x0c]<<8) | data[offset+0x0d];
+	wb->cbr[1] = (data[offset+0x0e]<<8) | data[offset+0x0f];
 	wb->ctl[1] = (data[offset+0x10]<<8) | data[offset+0x11];
 	wb->cbl[1] = (data[offset+0x12]<<8) | data[offset+0x13];
 
@@ -119,7 +119,8 @@ void wii_board_disconnected(struct wii_board_t* wb)
  *	@param msg		The message specified in the event packet.
  */
 void wii_board_event(struct wii_board_t* wb, ubyte* msg)
-{ 
+{
+    WIIUSE_DEBUG("wii_board_event");
 	wb->rtr = (msg[0]<<8)|msg[1];
 	wb->rbr = (msg[2]<<8)|msg[3];
 	wb->rtl = (msg[4]<<8)|msg[5];
