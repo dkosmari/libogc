@@ -279,13 +279,19 @@ void calc_balanceboard_state(struct wii_board_t *wb)
 	else
 	{
 		wb->bl = 17.0f*(f32)(wb->rbl-wb->cbl[1])/(f32)(wb->cbl[2]-wb->cbl[1]) + 17.0f;
-	}	 
+	}
 
-	wb->x = ((wb->tr+wb->br) - (wb->tl+wb->bl))/2.0f;
-	wb->y = ((wb->bl+wb->br) - (wb->tl+wb->tr))/2.0f;
+	wb->weight = wb->tl + wb->tr + wb->bl + wb->br;
+
+	if (wb->weight > 1.0f) {
+		wb->x = ((wb->tr+wb->br) - (wb->tl+wb->bl)) / wb->weight;
+		wb->y = ((wb->bl+wb->br) - (wb->tl+wb->tr)) / wb->weight;
+	} else {
+		wb->x = 0;
+		wb->y = 0;
+	}
 
 	// Based on https://wiibrew.org/wiki/Wii_Balance_Board
-	wb->weight = wb->tl + wb->tr + wb->bl + wb->br;
 	const double a = 0.9990813732147217;
 	const double b = 0.007000000216066837;
 	const double c = 1.0 - b * (wb->rtemp - wb->ctemp) / 10.0;

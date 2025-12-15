@@ -540,8 +540,8 @@ typedef struct wii_board_t {
 	float bl;	/**< bottom left (Kg) */
 	float br;	/**< bottom right (Kg) */
 	float weight;	/**< total (Kg) */
-	float x;
-	float y;
+	float x;	/**< -1 if all the weight is to the left, +1 to the right */
+	float y;	/**< -1 if all the weight is to the top, +1 to the bottom */
 	ubyte battery;	/**< number of battery bars, from 0 to 4 */
 } wii_board_t;
 
