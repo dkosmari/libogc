@@ -69,33 +69,36 @@ int wii_board_handshake(struct wiimote_t* wm, struct wii_board_t* wb, ubyte* dat
 		offset += 0x10;
 	}
 
-	// The refrence values for 0 Kg
+	/* The reference values for 0 Kg */
 	wb->ctr[0] = (data[offset+0x04]<<8) | data[offset+0x05];
 	wb->cbr[0] = (data[offset+0x06]<<8) | data[offset+0x07];
 	wb->ctl[0] = (data[offset+0x08]<<8) | data[offset+0x09];
 	wb->cbl[0] = (data[offset+0x0a]<<8) | data[offset+0x0b];
 
-	// The reference values for 17 Kg
+	/* The reference values for 17 Kg */
 	wb->ctr[1] = (data[offset+0x0c]<<8) | data[offset+0x0d];
 	wb->cbr[1] = (data[offset+0x0e]<<8) | data[offset+0x0f];
 	wb->ctl[1] = (data[offset+0x10]<<8) | data[offset+0x11];
 	wb->cbl[1] = (data[offset+0x12]<<8) | data[offset+0x13];
 
-	// The reference values for 34 Kg
+	/* The reference values for 34 Kg */
 	wb->ctr[2] = (data[offset+0x14]<<8) | data[offset+0x15];
 	wb->cbr[2] = (data[offset+0x16]<<8) | data[offset+0x17];
 	wb->ctl[2] = (data[offset+0x18]<<8) | data[offset+0x19];
 	wb->cbl[2] = (data[offset+0x1a]<<8) | data[offset+0x1b];
 
-	// The minimum battery value (always 0x6a).
+	/* The minimum battery value (always 0x6a). */
 	wb->cbat = data[offset+0x01];
 
-	// The reference temperature.
+	/* The reference temperature. */
         wb->ctemp = data[offset+0x40];
 
 	/* handshake done */
 	wm->event = WIIUSE_WII_BOARD_INSERTED;
 	wm->exp.type = EXP_WII_BOARD;
+
+	/* Balance Board only has the first LED, so make sure it's on. */
+	wiiuse_set_leds(wm, WIIMOTE_LED_1, NULL);
 
 	return 1; 
 }
