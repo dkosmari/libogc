@@ -520,27 +520,29 @@ typedef struct guitar_hero_3_t {
   * @brief Wii Balance Board expansion device.
   */
 typedef struct wii_board_t {
-	short rtl; /* RAW */
+	/* RAW */
+	short rtl; 
 	short rtr;
 	short rbl;
 	short rbr;
 	ubyte rtemp;
-	ubyte rbat; /* /RAW */
-	short ctl[3]; /* Calibration */
+	ubyte rbat;
+	/* Calibration */
+	short ctl[3];
 	short ctr[3];
 	short cbl[3];
 	short cbr[3];
 	ubyte ctemp;
-	ubyte cbat;  /* /Calibration */
-	float tl; /* Calculated */
-	float tr;
-	float bl;
-	float br;
-	float weight;
+	ubyte cbat;	/**< always 0x69 */
+	/* Calculated */
+	float tl;	/**< top left (Kg) */
+	float tr;	/**< top right (Kg */
+	float bl;	/**< bottom left (Kg) */
+	float br;	/**< bottom right (Kg) */
+	float weight;	/**< total (Kg) */
 	float x;
 	float y;
-	float temp;
-	float bat; /* /Calculated */
+	ubyte battery;	/**< number of battery bars, from 0 to 4 */
 } wii_board_t;
 
 typedef struct motion_plus_t

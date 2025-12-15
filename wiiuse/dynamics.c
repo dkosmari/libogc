@@ -225,6 +225,19 @@ void apply_smoothing(struct accel_t* ac, struct orient_t* orient, int type) {
 	}
 }
 
+static unsigned calc_balanceboard_battery_bars(const struct wii_board_t *wb)
+{
+    if (wb->rbat >= 0x82)
+        return 4;
+    if (wb->rbat >= 0x7d)
+        return 3;
+    if (wb->rbat >= 0x78)
+        return 2;
+    if (wb->rbat >= wb->cbat)
+        return 1;
+    return 0;
+}
+
 void calc_balanceboard_state(struct wii_board_t *wb)
 {
 	/* 
@@ -275,7 +288,7 @@ void calc_balanceboard_state(struct wii_board_t *wb)
 	wb->weight = wb->tl + wb->tr + wb->bl + wb->br;
 	const double a = 0.9990813732147217;
 	const double b = 0.007000000216066837;
-	const double c = -(b * ((wb->rtemp - wb->ctemp) / 10.0) - 1.0);
+	const double c = 1.0 - b * (wb->rtemp - wb->ctemp) / 10.0;
 #define ADJUST_WEIGHT(w) w = a * w * c
 	ADJUST_WEIGHT(wb->tl);
 	ADJUST_WEIGHT(wb->tr);
@@ -283,5 +296,5 @@ void calc_balanceboard_state(struct wii_board_t *wb)
 	ADJUST_WEIGHT(wb->br);
 	ADJUST_WEIGHT(wb->weight);
 #undef ADJUST_WEIGHT
-	wb->bat = (wb->rbat - wb->cbat) / 24.0f;
+	wb->battery = calc_balanceboard_battery_bars(wb);
 }
