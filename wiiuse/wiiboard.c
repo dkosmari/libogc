@@ -47,6 +47,11 @@
 #include "wiiboard.h"
 #include "io.h"
 
+static u16 load_be_u16(u8* data)
+{
+	return ((u16)(data[0] << 8)) | ((u16)data[1]);
+}
+
 /**
  *	@brief Handle the handshake data from the wiiboard.
  *
@@ -58,10 +63,10 @@
  */
 int wii_board_handshake(struct wiimote_t* wm, struct wii_board_t* wb, ubyte* data, uword len) 
 {
-	int offset = 0;
+	unsigned offset = 0;
 
-	if (data[offset]==0xff) {
-		if (data[offset+0x10]==0xff) {
+	if (data[offset] == 0xff) {
+		if (data[offset + 0x10] == 0xff) {
 			WIIUSE_DEBUG("Wii Balance Board handshake appears invalid, trying again.");
 			wiiuse_read_data(wm, data, WM_EXP_MEM_CALIBR, EXP_HANDSHAKE_LEN, wiiuse_handshake_expansion);
 			return 0;
@@ -69,29 +74,21 @@ int wii_board_handshake(struct wiimote_t* wm, struct wii_board_t* wb, ubyte* dat
 		offset += 0x10;
 	}
 
-	/* The reference values for 0 Kg */
-	wb->ctr[0] = (data[offset+0x04]<<8) | data[offset+0x05];
-	wb->cbr[0] = (data[offset+0x06]<<8) | data[offset+0x07];
-	wb->ctl[0] = (data[offset+0x08]<<8) | data[offset+0x09];
-	wb->cbl[0] = (data[offset+0x0a]<<8) | data[offset+0x0b];
-
-	/* The reference values for 17 Kg */
-	wb->ctr[1] = (data[offset+0x0c]<<8) | data[offset+0x0d];
-	wb->cbr[1] = (data[offset+0x0e]<<8) | data[offset+0x0f];
-	wb->ctl[1] = (data[offset+0x10]<<8) | data[offset+0x11];
-	wb->cbl[1] = (data[offset+0x12]<<8) | data[offset+0x13];
-
-	/* The reference values for 34 Kg */
-	wb->ctr[2] = (data[offset+0x14]<<8) | data[offset+0x15];
-	wb->cbr[2] = (data[offset+0x16]<<8) | data[offset+0x17];
-	wb->ctl[2] = (data[offset+0x18]<<8) | data[offset+0x19];
-	wb->cbl[2] = (data[offset+0x1a]<<8) | data[offset+0x1b];
+	
+	for (unsigned i = 0; i < WII_BOARD_NUM_SENSORS; ++i) {
+		/* The reference values for 0 Kg */
+		wb->cal_sensor[i].ref_0  = load_be_u16(data + offset + 0x04 + 2*i);
+		/* The reference values for 17 Kg */
+		wb->cal_sensor[i].ref_17 = load_be_u16(data + offset + 0x0c + 2*i);
+		/* The reference values for 34 Kg */
+		wb->cal_sensor[i].ref_34 = load_be_u16(data + offset + 0x14 + 2*i);
+	}
 
 	/* The minimum battery value (always 0x6a). */
-	wb->cbat = data[offset+0x01];
+	wb->cal_bat = data[offset + 0x01];
 
 	/* The reference temperature. */
-        wb->ctemp = data[offset+0x40];
+        wb->cal_temp = data[offset + 0x40];
 
 	/* handshake done */
 	wm->event = WIIUSE_WII_BOARD_INSERTED;
@@ -123,11 +120,8 @@ void wii_board_disconnected(struct wii_board_t* wb)
  */
 void wii_board_event(struct wii_board_t* wb, ubyte* msg)
 {
-    WIIUSE_DEBUG("wii_board_event");
-	wb->rtr = (msg[0]<<8)|msg[1];
-	wb->rbr = (msg[2]<<8)|msg[3];
-	wb->rtl = (msg[4]<<8)|msg[5];
-	wb->rbl = (msg[6]<<8)|msg[7];
-	wb->rtemp = msg[0x8];
-	wb->rbat = msg[0xa];
+	for (unsigned i = 0; i < WII_BOARD_NUM_SENSORS; ++i)
+		wb->raw_sensor[i] = load_be_u16(msg + 2*i);
+	wb->raw_temp = msg[0x8];
+	wb->raw_bat = msg[0xa];
 }

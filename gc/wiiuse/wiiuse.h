@@ -515,33 +515,38 @@ typedef struct guitar_hero_3_t {
 	struct joystick_t js;			/**< joystick calibration					*/
 } guitar_hero_3_t;
 
+enum wii_board_sensor_id_t {
+	WII_BOARD_SENSOR_ID_TOP_RIGHT,
+	WII_BOARD_SENSOR_ID_BOT_RIGHT,
+	WII_BOARD_SENSOR_ID_TOP_LEFT,
+	WII_BOARD_SENSOR_ID_BOT_LEFT,
+	WII_BOARD_NUM_SENSORS
+};
+
+typedef struct wii_board_sensor_cal_t {
+	short ref_0;
+	short ref_17;
+	short ref_34;
+} wii_board_sensor_cal_t;
+
 /**
   * @struct wii_board_t
   * @brief Wii Balance Board expansion device.
   */
 typedef struct wii_board_t {
 	/* RAW */
-	short rtl; 
-	short rtr;
-	short rbl;
-	short rbr;
-	ubyte rtemp;
-	ubyte rbat;
+	short raw_sensor[WII_BOARD_NUM_SENSORS];
+	ubyte raw_temp;
+	ubyte raw_bat;
 	/* Calibration */
-	short ctl[3];
-	short ctr[3];
-	short cbl[3];
-	short cbr[3];
-	ubyte ctemp;
-	ubyte cbat;	/**< always 0x69 */
+	wii_board_sensor_cal_t cal_sensor[WII_BOARD_NUM_SENSORS];
+	ubyte cal_temp;
+	ubyte cal_bat;	/**< always 0x69 */
 	/* Calculated */
-	float tl;	/**< top left (Kg) */
-	float tr;	/**< top right (Kg */
-	float bl;	/**< bottom left (Kg) */
-	float br;	/**< bottom right (Kg) */
-	float weight;	/**< total (Kg) */
-	float x;	/**< -1 if all the weight is to the left, +1 to the right */
-	float y;	/**< -1 if all the weight is to the top, +1 to the bottom */
+	float weight[WII_BOARD_NUM_SENSORS];
+	float total_weight;
+	float x;	/**< normalized to [-1, +1], positive is right */
+	float y;	/**< normalized [-1, +1], positive is up */
 	ubyte battery;	/**< number of battery bars, from 0 to 4 */
 } wii_board_t;
 

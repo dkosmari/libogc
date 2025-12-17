@@ -7,3 +7,5 @@ gc/ogc/libversion.h
 *.bz2
 docs
 warn.log
+compile_flags.txt
+*~
